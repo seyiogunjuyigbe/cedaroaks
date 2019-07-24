@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
      amount: Number,
      date: String  
     }],
-    balance: {type: Number, default: 0}
+    balance: {type: Number, default: 0},
+    category: String
 })
 let User = mongoose.model('User', userSchema);
 
@@ -77,7 +78,7 @@ app.get("/profile/:id", function(req,res){
             })
             res.render("profile", {User:thisUser})
         }
-        console.log(thisUser)
+        // console.log(thisUser)
     })
     
 })
@@ -87,6 +88,7 @@ app.get("/all", function(req, res){
         res.render("allUsers", {Users: allUsers})
     })
 })
+
 
 app.listen(8888, process.env.IP, function(){
     console.log("App Started!")

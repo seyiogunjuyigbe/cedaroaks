@@ -2,17 +2,13 @@
 <title>Cedar - <%= User.name %></title> 
 </head>
 <body>
-<h1>
-    Welcome <%= User.name %>
-</h1>
-
+<h3 class="lead">Welcome <%= User.name %></h3>
+<small class="text-muted"><%= User.category %></small>
 <section>
-    <table class="table table-responsive table-dark">
-        <tr>
-            <td>Your balance</td>
-            <td><span class="naira">N</span> <%= User.balance %></td>
-        </tr>
-        </table>
+    
+            <p>Your balance <span class="badge badge-info"><span class="naira">N</span> <%= User.balance %></span></p>
+            
+        
         <% if(User.payments.length>0){ %>
             <table class="table table-dark table-striped table-bordered table-hover">
             <thead class="thead-dark">

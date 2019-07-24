@@ -2,7 +2,7 @@
 <title>Cedar - <%= User.name %></title> 
 </head>
 <body>
-<h3 class="lead">Welcome <%= User.name %></h3>
+<h3 class="lead">Welcome <%= `${User.firstName} ${User.lastName}` %></h3>
 <small class="text-muted"><%= User.category %></small>
 <section>
     

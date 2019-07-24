@@ -14,7 +14,8 @@ else{ %>
 <table id="users-table" class="table table-dark table-striped table-bordered table-hover">
         <thead class="thead-dark">
                 <tr>
-                    <th scope="col">Name</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
                     <th scope="col">Phone Number</th>
                     <th scope="col">Email</th>
                     <th scope="col">Balance</th>
@@ -28,7 +29,8 @@ else{ %>
             <tbody>
                <% Users.forEach(function(user){ %>
                 <tr>        
-                <td><%= user.name %></td>  
+                <td><%= user.firstName %></td> 
+                <td><%= user.lastName %></td>  
                 <td><%= user.phone %></td>
                 <td><%= user.email %></td>      
                 <td><span class="naira">N</span> <%= user.balance %></td>

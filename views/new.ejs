@@ -1,0 +1,19 @@
+<% include partials/header.ejs %>
+<title>Cedar - New User</title> 
+</head>
+<body>
+<h1>New User</h1>
+
+<form action="/" method="POST">
+    <label for="name">Your name</label>
+<input class="form-control" type="text" name="User[name]" id="name" required>
+<label for="email">Email Add</label>
+<input class="form-control" type="email" name="User[email]" id="email" required>
+<label for="phone">Phone Num</label>
+<input class="form-control" type="tel" name="User[phone]" id="phone" required>
+<div class="form-group">
+<input class="form-control btn btn-success" type="submit">
+</div>
+</form>
+
+<% include partials/footer.ejs %>

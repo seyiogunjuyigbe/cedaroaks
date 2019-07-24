@@ -1,0 +1,13 @@
+body{
+    margin-left: 1.2em;
+}
+form, table, .alert.alert-danger{
+    width: 40% !important; 
+    }
+#users-table{
+    width:100% !important;
+}
+    .naira{
+        text-decoration: line-through;
+        text-decoration-style: double;
+    }

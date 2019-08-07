@@ -1,11 +1,13 @@
-const express = require('express');
-const app = express();
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const passportLocalMongoose = require('passport-local-mongoose');
-const methodOverride = require('method-override');
+var express = require('express');
+var app = express();
+var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+var passport = require('passport');
+var LocalStrategy = require('passport-local');
+var passportLocalMongoose = require('passport-local-mongoose');
+var methodOverride = require('method-override');
+var flash = require("connect-flash");
+
 
 
 mongoose.Promise = global.Promise;
@@ -14,34 +16,77 @@ mongoose.connect('mongodb://localhost/cedaroaks', {useNewUrlParser: true});
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
+app.use(flash());
 
+const User = require("./models/user");
+const Admin = require("./models/admin");
 
-//Schema Set Up
-//user schema setup
-const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    phone: Number,
-    username: String,
-    password: String,
-    payments: [{
-     amount: Number,
-     date: String  
-    }],
-    balance: {type: Number, default: 0},
-    category: String
+function addAdmin(){
+let newAdmin = new Admin({
+    username: "admin", 
+    firstName: "Seyi",
+    lastName: "Ogunjuyigbe",
+    phone: 08169606684,
+    email: "seyiogunjuyigbe@gmail.com",
+    category: "Admin"
 });
-userSchema.plugin(passportLocalMongoose);
-let User = mongoose.model('User', userSchema);
+let password = "admin"
+  Admin.register({
+    newAdmin, password, function(err,admin){
+        if(err){
+            console.log(err);
+         }
+            passport.authenticate("local")(req, res, function(){
+                console.log(admin);
+                res.redirect("/")
+               })
+        
+}
+});  
+}
+// addAdmin();
 
-// User.remove({}, function(err){
-// if(err){
-//     console.log(err)
-// } else{
-//     console.log('removed!')
-// }
+
+
+const purseSchema = new mongoose.Schema({
+    totalAmount: Number,
+
+});
+let purse = function gatherPurse(users){
+    User.find({}, function(err, users){
+        let purseAmt = 0;
+        var userPayments = users.map(function (user) {
+            for (var i =0; i<users.length; i++){
+               
+               if(user.payments[i] !== undefined){
+                   
+                   purseAmt += user.payments[i].amount;
+               }
+                
+            }
+            
+          });
+    
+          console.log(`Total balance: ${purseAmt}`);
+    })
+}
+purse();
+
+
+// app.get("/a", function(req,res){
+//    User.find({}, function(err,all){
+//     if(err){
+//         console.log(err)
+//     } else {
+//         var allpays = [];
+//         all.forEach(function(user){
+//             allpays.push(user.payments)
+//         })
+//         res.send(allpays)
+//     }
+// }) 
 // })
+
 
 
 
@@ -51,120 +96,60 @@ app.use(require("express-session")({
     resave: false,
     saveUninitialized: false
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(passport.initialize());
+app.use(passport.session());
 
-//ROUTES Setup
-
-
-//User Routes
-//New User
-app.get("/", function (req,res){
-    res.render("new")
-})
-
-//Create new user
-app.post("/", function(req,res){
-    let user = req.body.User;
-    User.create(user, function(err, user){
-        if(err){
-            console.log(err)
-        } else{
-            console.log(`${user.name} added to DB`)
-            res.redirect("/profile/"+user._id)
-        }
-    })
-})
-
-//New payment route
-app.post("/pay/:id", function(req,res){
-    let payment = req.body.payments;
-    
-    User.findById(req.params.id, function(err, thisUser){
-        if(err){
-            console.log(err)
-        } else{
-            payment.date = new Date();
-            thisUser.payments.push(payment);
-            thisUser.save();
-            console.log(`${thisUser.firstName} paid ${payment.amount} on ${payment.date}`)
-        }
-        res.redirect("/profile/"+thisUser._id)
-    })
-    
-    
-
-    
-   
-})
-
-//Show User profile and balance
-app.get("/profile/:id", function(req,res){
-    User.findById(req.params.id, function(err, thisUser){
-        if(err){
-            console.log(err)
-        } else{
-            let payments = thisUser.payments;
-            let balance = thisUser.balance;
-            balance = 0
-            payments.forEach(function(payment){
-                balance += payment.amount;
-                thisUser.balance = balance;
-            })
-            res.render("profile", {User:thisUser})
-        }
-        // console.log(thisUser)
-    })
-    
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    next();
 })
 
 
-//Show all users
 
-app.get("/all", function(req, res){
+const clientRoutes = require("./routes/clients");
+const adminRoutes = require("./routes/admin");
+const clientAuthRoutes = require("./routes/index");
+
+app.use("/user", clientAuthRoutes);
+app.use("/user", clientRoutes);
+app.use("/admin", adminRoutes);
+
+
+app.get("/", isLoggedIn, function (req,res){
+    res.render("index", {currentUser:req.user})
+})
+
+app.get("/all", isLoggedIn, function(req, res){
     User.find({}, function(err, allUsers){
-        res.render("allUsers", {Users: allUsers})
+        console.log("User: "+req.user);
+        res.render("Admin/allUsers", {Users: allUsers, currentUser:req.user})
     })
 })
 
-
-//Auth Routes
-app.get("/register", function(req,res){
-    res.render("register");
-});
-
-app.post("/register", function(req,res){
-    let newUser = new User({username: req.body.username})
-User.register(newUser, req.body.password, function(err,user){
-    if(err){
-        console.log(err);
-        return res.render('register');
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next();
     } else{
-        passport.authenticate("local")(req, res, function(){
-            let user = req.body.user;
-            
-    User.create(user, function(err, user){
+           res.redirect("/user/login"); 
+    }
+    }
+
+
+function clearUsers(){
+    User.remove({}, function(err,removed){
         if(err){
             console.log(err)
         } else{
-            user.username = req.body.username;
-            user.password = req.body.password;
-            user.save();
-            console.log(user)
-            res.redirect("/profile/"+user._id)
+            console.log("All Users wiped off!!!!")
         }
     })
-        })
-    }
-})
-
-
-})
-
+}
+// clearUsers();
 app.listen(8888, process.env.IP, function(){
     console.log("App Started!")
 })

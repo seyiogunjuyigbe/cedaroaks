@@ -1,0 +1,14 @@
+function getNumberOfMovies(substr) {
+    /*
+     * Endpoint: "https://jsonmock.hackerrank.com/api/movies/search/?Title=substr"
+     */
+    let http = new XMLHttpRequest;
+     let url = "https://jsonmock.hackerrank.com/api/movies/search/?Title="+String(substr);
+        http.open('GET', url);
+        http.send();
+        http.onreadystatechange=(e)=>{
+            var answer = JSON.parse(http.responseText);
+            console.log(answer)
+        }
+        
+}

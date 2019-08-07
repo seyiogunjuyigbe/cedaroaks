@@ -1,8 +1,14 @@
-<% include partials/header.ejs %>
-<title>Cedar - All Users</title> 
-</head>
-<body>
+<% include ../partials/header.ejs %>
+
+        <style>
+        table{
+                width: 60%;
+        }
+        </style>
 <h1>All Cedar Users</h1>
+<% if(Users.length !== 0){ %>
+<p>Total balance <span class="badge badge-info"><span class="naira">N</span> <%=  %></span></p>
+<% } %>
 <% if(Users.length == 0){ %>
     <div class="alert alert-danger" role="alert">
             <p>No Users Yet!</p>  
@@ -14,14 +20,11 @@ else{ %>
 <table id="users-table" class="table table-dark table-striped table-bordered table-hover">
         <thead class="thead-dark">
                 <tr>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Phone Number</th>
-                    <th scope="col">Email</th>
+                    <th scope="col">Username</th>
                     <th scope="col">Balance</th>
                     <th scope="col">Last Contribution</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Loan Status</th>
+                    <th scope="col">Category</th>
                     <th scope="col">Action</th>
 
                     </tr>
@@ -29,10 +32,7 @@ else{ %>
             <tbody>
                <% Users.forEach(function(user){ %>
                 <tr>        
-                <td><%= user.firstName %></td> 
-                <td><%= user.lastName %></td>  
-                <td><%= user.phone %></td>
-                <td><%= user.email %></td>      
+                <td><%= user.username %></td> 
                 <td><span class="naira">N</span> <%= user.balance %></td>
                <% if(user.payments.length == 0){ %>
                     <td>No Contributions Yet</td>
@@ -45,12 +45,16 @@ else{ %>
                 <td><%= user.payments[indx].date %></td>
                    <% } %>
                 
-                <td>Nil</td>
-                <td><a class="btn btn-outline-secondary" href="/profile/<%=user._id%>">View USer's profile</a></td>
+                <td><%= user.category %></td>
+                <% if(user.category == 'Client'){ %>
+                <td><a class="btn btn-outline-secondary" href="user/profile/<%= user._id%>">View USer's profile</a></td>
+                <% } else{ %>
+                <td><a class="btn btn-outline-secondary" href="admin/profile/<%= user._id%>">View USer's profile</a></td>
+              <%  } %>
             </tr>
            <%  }) %>
             </tbody>
             </table>
                 
 <% } %>
-<% include partials/footer.ejs %>
+<% include ../partials/footer.ejs %>

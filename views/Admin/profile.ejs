@@ -1,15 +1,13 @@
-<% include partials/header.ejs %>
-<title>Cedar - <%= User.name %></title> 
-</head>
-<body>
-<h3 class="lead">Welcome <%= `${User.firstName} ${User.lastName}` %></h3>
-<small class="text-muted"><%= User.category %></small>
+<% include ../partials/header.ejs %>
+
+<h3 class="lead">Welcome <%= Admin.firstName %></h3>
+<small class="text-muted"><%= Admin.category %></small>
 <section>
     
-            <p>Your balance <span class="badge badge-info"><span class="naira">N</span> <%= User.balance %></span></p>
+            <p>Your balance <span class="badge badge-info"><span class="naira">N</span> <%= Admin.balance %></span></p>
             
         
-        <% if(User.payments.length>0){ %>
+        <% if(Admin.payments.length>0){ %>
             <table class="table table-dark table-striped table-bordered table-hover">
             <thead class="thead-dark">
                     <tr>
@@ -18,7 +16,7 @@
                         </tr>
                 </thead>
                 <tbody>
-            <% User.payments.forEach(function(payment){ %>
+            <% Admin.payments.forEach(function(payment){ %>
                 
                 <tr>
                     <td><span class="naira">N</span> <%= payment.amount %></td>
@@ -34,11 +32,12 @@
         <% } %>
     
 </section id="paySection">
-<form action="/pay/<%= User._id%>" method="POST">
+<form action="/admin/pay/<%= Admin._id%>" method="POST">
     
 <label for="amount">Payment Amount</label>
     <input class="form-control" placeholder="Amount" type="number" name="payments[amount]" id="amount" required>
-<label for="date">Payment Date</label>
-<input class="form-control" type="date" name="payments[date]" id="date" required>
+<!-- <label for="date">Payment Date</label> -->
+<!-- <input class="form-control" type="date" name="payments[date]" id="date" autocomplete="tel-country-code" required> -->
 <input class="form-control btn btn-outline-success" type="submit" value="Pay">
 </form>
+<% include ../partials/footer.ejs %>

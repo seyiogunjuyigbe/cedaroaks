@@ -28,16 +28,10 @@
        <% } else{ %>
             <div class="alert alert-danger" role="alert">
             <p>No contribution made yet! Please Click "Pay" to Contribute</p>  
+            
             </div> 
         <% } %>
-    
 </section id="paySection">
-<form action="/user/pay/<%= User._id%>" method="POST">
-    
-<label for="amount">Payment Amount</label>
-    <input class="form-control" placeholder="Amount" type="number" name="payments[amount]" id="amount" required>
-<!-- <label for="date">Payment Date</label> -->
-<!-- <input class="form-control" type="date" name="payments[date]" id="date" autocomplete="tel-country-code" required> -->
-<input class="form-control btn btn-outline-success" type="submit" value="Pay">
-</form>
+<a class="btn btn-primary" href="/user/profile/<%=User._id%>/payments/new">New Payment</a>
+
 <% include ../partials/footer.ejs %>

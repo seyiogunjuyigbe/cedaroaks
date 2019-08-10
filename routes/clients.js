@@ -1,50 +1,82 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
 const User = require('../models/user');
-const mongoose = require("mongoose");
 
-
-//New payment route
-router.post("/pay/:id", function(req,res){
-    let payment = req.body.payments;
+//Dashboard Route
+router.get("/profile/:id/dashboard", function(req,res){
+    User.findById(req.user.id, function(err,user){ 
+        if(err){
+        console.log(err)
+    }
+        else{
+           res.render("Clients/dashboard", {user:user}); 
+        }
+    })
     
-    User.findById(req.params.id, function(err, thisUser){
+   
+})
+
+//Payment Form
+router.get("/profile/:id/payments/new", isLoggedIn, function(req,res){
+    User.findById(req.params.id, function(err,user){
         if(err){
             console.log(err)
         } else{
-            payment.date = new Date();
-            thisUser.payments.push(payment);
-            thisUser.save();
-            console.log(`${thisUser.firstName} paid ${payment.amount} on ${payment.date}`)
-            // console.log(thisUser)
+            res.render("Clients/paymentForm", {user:user})
         }
-        res.redirect("/user/profile/"+thisUser._id)
+   })
+});
+
+//New payment route
+router.post("/profile/:id/payment/new", isLoggedIn, function(req,res){
+    
+    User.findById(req.user._id, function(err, user){
+        if(err){
+            console.log(err)
+        } else{
+            // let payment = req.body.payments;
+            // payment.date = new Date();
+          let payment = {amount:req.body.amount, date: new Date()}
+            user.payments.push(payment);
+            user.payments.forEach(function(payment){
+            if(user.balance == NaN || user.balance == undefined){
+                user.balance = 0;
+                user.balance += payment.amount;
+            } else{
+                user.balance += payment.amount;
+            }
+         })
+            user.save();
+            console.log(`${user.firstName} paid ${payment.amount} on ${payment.date}`)
+            console.log(user)
+        }
+        res.redirect(`/user/profile/${user._id}`)
     });
 });
 
 //Show User profile and balance
 router.get("/profile/:id", function(req,res){
-    User.findById(req.params.id, function(err, thisUser){
+    User.findById(req.params.id, function(err, user){
         if(err){
             console.log(err)
         } else{
-            let payments = thisUser.payments;
-            let balance = thisUser.balance;
-            balance = 0
-            payments.forEach(function(payment){
-                balance += payment.amount;
-                thisUser.balance = balance;
-            })
-            res.render("Clients/profile", {User:thisUser})
+          res.render("Clients/profile", {User:user})
         }
-        // console.log(thisUser)
     })
     
 });
 
+router.get("/profile/:id/loan-request", function(req,res){
+    res.send("Loan request route")
+})
 
 
-
-
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next();
+    } else{
+           res.redirect("/user/login"); 
+    }
+    }
 
 module.exports = router;

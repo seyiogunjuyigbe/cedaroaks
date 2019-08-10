@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router({mergeParams: true});
 var passport = require('passport');
 var User = require("../models/user");
-var Admin = require("../models/admin");
+
 
 //Auth Routes
 //Registration form
@@ -28,7 +28,7 @@ User.register(newUser, req.body.password, function(err,user){
     }
         passport.authenticate("local")(req, res, function(){
             console.log(user);
-            res.redirect("/")
+            res.redirect("/user/dashboard")
            })
     
 })
@@ -40,7 +40,7 @@ router.get("/login", function(req,res){
 })
 
 router.post("/login", passport.authenticate("local", {
-    successRedirect:"/",
+    successRedirect:'/',
     failureRedirect: "/user/login"
 }), function(req,res){
     // res.redirect("/all")

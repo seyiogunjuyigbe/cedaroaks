@@ -11,10 +11,10 @@ const userSchema = new mongoose.Schema({
     username: String,
     password: String,
     payments: [{
-     amount: Number,
-     date: String  
+        amount:Number,
+        date:String
     }],
-    balance: {type: Number, default:0},
+    balance: {type: Number},
     category: String
 });
 userSchema.plugin(passportLocalMongoose);

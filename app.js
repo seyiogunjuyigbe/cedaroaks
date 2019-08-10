@@ -7,8 +7,19 @@ var LocalStrategy = require('passport-local');
 var passportLocalMongoose = require('passport-local-mongoose');
 var methodOverride = require('method-override');
 var flash = require("connect-flash");
+var paystack = require('paystack')('secret_key');
 
 
+// paystack.key = 'sk_test_96e638f48542c0be579ef8b0985b9955a413144a';
+// paystack.plan.create({
+//     name: 'API demo',
+//     amount: 10000,
+//     interval: 'monthly'
+//   })
+//     .then(function(error, body) {
+//        console.log(error);
+//       console.log(body);
+//       });
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/cedaroaks', {useNewUrlParser: true});
@@ -18,77 +29,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
 app.use(flash());
 
+
 const User = require("./models/user");
 const Admin = require("./models/admin");
-
-function addAdmin(){
-let newAdmin = new Admin({
-    username: "admin", 
-    firstName: "Seyi",
-    lastName: "Ogunjuyigbe",
-    phone: 08169606684,
-    email: "seyiogunjuyigbe@gmail.com",
-    category: "Admin"
-});
-let password = "admin"
-  Admin.register({
-    newAdmin, password, function(err,admin){
-        if(err){
-            console.log(err);
-         }
-            passport.authenticate("local")(req, res, function(){
-                console.log(admin);
-                res.redirect("/")
-               })
-        
-}
-});  
-}
-// addAdmin();
-
-
-
-const purseSchema = new mongoose.Schema({
-    totalAmount: Number,
-
-});
-let purse = function gatherPurse(users){
-    User.find({}, function(err, users){
-        let purseAmt = 0;
-        var userPayments = users.map(function (user) {
-            for (var i =0; i<users.length; i++){
-               
-               if(user.payments[i] !== undefined){
-                   
-                   purseAmt += user.payments[i].amount;
-               }
-                
-            }
-            
-          });
-    
-          console.log(`Total balance: ${purseAmt}`);
-    })
-}
-purse();
-
-
-// app.get("/a", function(req,res){
-//    User.find({}, function(err,all){
-//     if(err){
-//         console.log(err)
-//     } else {
-//         var allpays = [];
-//         all.forEach(function(user){
-//             allpays.push(user.payments)
-//         })
-//         res.send(allpays)
-//     }
-// }) 
-// })
-
-
-
+const Payment = require("./models/payment")
 
 //PASSPORT CoNFIG
 app.use(require("express-session")({
@@ -101,6 +45,10 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// passport.use(new LocalStrategy(Admin.authenticate()));
+// passport.serializeUser(Admin.serializeUser());
+// passport.deserializeUser(Admin.deserializeUser());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -109,26 +57,23 @@ app.use(function(req, res, next){
     next();
 })
 
-
-
 const clientRoutes = require("./routes/clients");
 const adminRoutes = require("./routes/admin");
-const clientAuthRoutes = require("./routes/index");
+const clientAuthRoutes = require("./routes/userindex");
+const clientPayRoutes = require("./routes/payments")
+const adminAuthRoutes = require("./routes/adminindex");
+
 
 app.use("/user", clientAuthRoutes);
 app.use("/user", clientRoutes);
+app.use("/user/profile/:id/payments", clientPayRoutes);
 app.use("/admin", adminRoutes);
+app.use("/admin", adminAuthRoutes);
+
 
 
 app.get("/", isLoggedIn, function (req,res){
     res.render("index", {currentUser:req.user})
-})
-
-app.get("/all", isLoggedIn, function(req, res){
-    User.find({}, function(err, allUsers){
-        console.log("User: "+req.user);
-        res.render("Admin/allUsers", {Users: allUsers, currentUser:req.user})
-    })
 })
 
 function isLoggedIn(req,res,next){
@@ -147,9 +92,46 @@ function clearUsers(){
         } else{
             console.log("All Users wiped off!!!!")
         }
-    })
+    });
+
+    Admin.remove({}, function(err,removed){
+        if(err){
+            console.log(err)
+        } else{
+            console.log("All Admins wiped off!!!!")
+        }
+    });
 }
 // clearUsers();
+
+function createAdmin(){
+    var password = "password"
+    var newAdmin = new Admin({
+        username: "cedar", 
+        firstName: "Oluwaseyi",
+        lastName: "Ogunjuyigbe",
+        phone: 08169606684,
+        email: "",
+        category: "Admin"
+    })
+Admin.register(newAdmin, password, function(err,admin){
+    if(err){
+        console.log(err);
+        // return res.render('Clients/register');
+    }
+        passport.authenticate("local")(function(){
+            console.log(admin);
+            // res.redirect("/")
+           })
+    })
+};
+
+// createAdmin();
+
+app.get("*", function(req,res){
+    res.render("Error");
+})
+
 app.listen(8888, process.env.IP, function(){
     console.log("App Started!")
 })

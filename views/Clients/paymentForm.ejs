@@ -1,0 +1,13 @@
+<% include ../partials/header.ejs %>
+<h1>Make Payment</h1>
+<form action="/user/profile/<%= user._id%>/payments/new" method="POST">
+    
+    <label for="amount">Payment Amount</label>
+        <input class="form-control" placeholder="Amount" type="number" name="amount" id="amount" required>
+    <!-- <label for="date">Payment Date</label> -->
+    <!-- <input class="form-control" type="date" name="payment[date]" id="date" required> -->
+    <input class="form-control btn btn-outline-success" type="submit" value="Pay">
+    </form>
+
+
+<% include ../partials/footer.ejs %>

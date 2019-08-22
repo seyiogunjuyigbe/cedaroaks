@@ -1,6 +1,6 @@
 <% include ../partials/header.ejs %>
 <h1>Make Payment</h1>
-<form action="/user/profile/<%= user._id%>/payments/new" method="POST">
+<form action="/user/profile/<%= user._id%>/contributions/new" method="POST">
     
     <label for="amount">Payment Amount</label>
         <input class="form-control" placeholder="Amount" type="number" name="amount" id="amount" required>

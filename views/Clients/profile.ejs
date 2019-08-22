@@ -1,10 +1,8 @@
 <% include ../partials/header.ejs %>
 
-<h3 class="lead">Welcome <%= User.firstName %></h3>
-<small class="text-muted"><%= User.category %></small>
 <section>
     
-            <p>Your balance <span class="badge badge-info"><span class="naira">N</span> <%= User.balance %></span></p>
+            <!-- <p>Total Contributions <span class="badge badge-info"><span class="naira">N</span> <%= User.balance %></span></p> -->
             
         
         <% if(User.payments.length>0){ %>
@@ -32,6 +30,6 @@
             </div> 
         <% } %>
 </section id="paySection">
-<a class="btn btn-primary" href="/user/profile/<%=User._id%>/payments/new">New Payment</a>
+<a class="btn btn-primary" href="/user/profile/<%=User._id%>/contributions/new">New Payment</a>
 
 <% include ../partials/footer.ejs %>

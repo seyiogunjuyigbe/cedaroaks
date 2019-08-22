@@ -1,3 +1,10 @@
 <% include ../partials/header.ejs %>
-<h1><%= user %></h1>
+<div class="container">
+    <div class="jumbotron">
+        <h2 class="lead">Welcome, <%= user.firstName %></h2>
+        <small class="text-muted badge badge-info"><%= user.category %></small>
+    </div>
+    
+</div>
+
 <% include ../partials/footer.ejs %>

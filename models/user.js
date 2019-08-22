@@ -14,6 +14,35 @@ const userSchema = new mongoose.Schema({
         amount:Number,
         date:String
     }],
+    loanRequests:[{
+        amount: Number,
+        dateApplied: String,
+        duration: Number,
+        paybackAmount: Number,
+        rate: Number,
+        dueDate: {type: String, default: ""},
+        guarantor1ID: String,
+        guarantor1Username: String,
+        guarantor2ID: String,
+        guarantor2Username: String,
+    }],
+    approvedLoans:[
+        {
+            id: String,
+            amount: Number,
+            paybackAmount: Number,
+
+        }],
+    guarantorRequests:[
+        {
+            requestorId: String,
+            requestorUsername:String,
+            requestAmount: Number,
+            requestDate: String,
+            requestDueDate: String,
+            requestPaybackAmount: Number
+            
+    }],
     balance: {type: Number},
     category: String
 });

@@ -3,13 +3,13 @@ const router = express.Router({mergeParams: true});
 const User = require('../models/user');
 const Payment = require("../models/payment");
 
-
+ 
 router.get("/new", function(req,res){
     User.findById(req.params.id, function(err,user){
         if(err){
             console.log(err)
         } else{
-            res.render("Clients/paymentForm", {user:user})
+            res.render("Clients/contributionForm", {user:user})
         }
    })
 });
@@ -33,14 +33,14 @@ router.post("/new", isLoggedIn, function (req,res){
                     payment.payee.email = user.email;
                     payment.save()
                     user.payments.push(payment);
-                    user.payments.forEach(function(payment){
-                        if(user.balance == NaN || user.balance == undefined){
-                            user.balance = 0;
-                            user.balance += payment.amount;
-                        } else{
-                            user.balance += payment.amount;
-                        }
-                     })
+                    // user.payments.forEach(function(payment){
+                    //     if(user.balance == NaN || user.balance == undefined){
+                    //         user.balance = 0;
+                    //         user.balance += payment.amount;
+                    //     } else{
+                    //         user.balance += payment.amount;
+                    //     }
+                    //  })
                     user.save();
                     console.log(user);
                 }

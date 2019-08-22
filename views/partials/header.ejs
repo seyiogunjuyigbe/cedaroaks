@@ -36,23 +36,29 @@
                        <%  } %>
                         </span>
                           </li> 
-               <% } %>
+              
                 </ul>
             <ul class="nav nav-pills flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="">Home <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="">Payment History</a>
-              </li>
+                  <a class="nav-link" href="/user/profile/<%= currentUser._id%>/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile/<%= currentUser._id%>/contributions/new">Make Contribution</a>
+                  </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile/<%= currentUser._id%>">Contribution History</a>
+                  </li>
+
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="">Loans</a>
                 
-                    <a class="dropdown-item" href="">Loan Requests</a>
-                  
-                    <a class="dropdown-item" href="">Approved Loans</a>             
+                    <a class="dropdown-item" href="/user/profile/<%= currentUser._id%>/loan-request/new">Request Loan</a>
+                    <a class="dropdown-item" href="/user/profile/<%= currentUser._id%>/loan-request/status">Check Loan Status</a>   
+                    <a class="dropdown-item" href="/user/profile/<%= currentUser._id%>/guarantor-requests">Guarantor Requests</a>             
+
               </li>
               
             </ul>
+            <% } %>
           </nav>
         <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">

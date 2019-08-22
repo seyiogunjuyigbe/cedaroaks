@@ -7,7 +7,7 @@ const Purse = require("../models/purse")
 router.use(function(req, res, next){
     res.locals.currentUser = req.user;
     next();
-})
+})  
 
 function gatherPurse(){
       Purse.findById('5d4d4171d620241cb803eda0', function(err,purse){
@@ -30,9 +30,12 @@ function gatherPurse(){
 };
 // gatherPurse();
 
-
+//Admin Index
+router.get("/", function(req,res){
+    res.render("/Admin/index")
+})
 //Dashboard Route
-router.get("/dashboard", isLoggedInAdmin, function(req,res){
+router.get("/dashboard", function(req,res){
     Admin.findById(req.user.id, function(err, found){
     Admin.find({}, function(err,admins){
         if(err){
@@ -100,6 +103,19 @@ router.get("/payloan/:id", function(req,res){
 
     })
 })
+
+//View all users
+//View all payments
+// View Loan requests
+    //Loans awaiting approval
+    //Approved , yet to  be disbursed
+    //Dibursed
+    //Yet to be repaid
+    //Paid
+    //Rejected requests
+//Verify User
+//Resolve conflicts
+
 
 function isLoggedInAdmin(req,res,next){
 if(req.isAuthenticated() && req.user.category == "Admin"){

@@ -9,8 +9,8 @@ var methodOverride = require('method-override');
 var flash = require("connect-flash");
 var paystack = require('paystack')('secret_key');
 
-
-// paystack.key = 'sk_test_96e638f48542c0be579ef8b0985b9955a413144a';
+ 
+paystack.key = 'sk_test_96e638f48542c0be579ef8b0985b9955a413144a';
 // paystack.plan.create({
 //     name: 'API demo',
 //     amount: 10000,
@@ -21,6 +21,12 @@ var paystack = require('paystack')('secret_key');
 //       console.log(body);
 //       });
 
+    
+//       paystack.plan.get(90)
+//       .then(function(error, body) {
+//           console.log(error);
+//           console.log(body);
+//       });
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/cedaroaks', {useNewUrlParser: true});
 
@@ -38,16 +44,17 @@ const Payment = require("./models/payment")
 app.use(require("express-session")({
     secret: "cedar-secret",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false, 
+    expires: new Date(Date.now() + (30 * 86400 * 1000))
 }));
 
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use("local", new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// passport.use(new LocalStrategy(Admin.authenticate()));
-// passport.serializeUser(Admin.serializeUser());
-// passport.deserializeUser(Admin.deserializeUser());
+passport.use("admin-local", new LocalStrategy(Admin.authenticate()));
+passport.serializeUser(Admin.serializeUser());
+passport.deserializeUser(Admin.deserializeUser());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -66,13 +73,13 @@ const adminAuthRoutes = require("./routes/adminindex");
 
 app.use("/user", clientAuthRoutes);
 app.use("/user", clientRoutes);
-app.use("/user/profile/:id/payments", clientPayRoutes);
+app.use("/user/profile/:id/contributions", clientPayRoutes);
 app.use("/admin", adminRoutes);
 app.use("/admin", adminAuthRoutes);
 
 
 
-app.get("/", isLoggedIn, function (req,res){
+app.get("/", function (req,res){
     res.render("index", {currentUser:req.user})
 })
 

@@ -1,0 +1,91 @@
+<% include ../partials/header.ejs %>
+
+<div class="container">
+    <div class="jumbotron"><h1>Loan Calculator</h1>
+    <p id="hint">Hint: Input the details as required, do not add commas or other symbols where numbers are required.</p></div>
+    
+        <form action="/User/profile/<%= User._id%>/loan-request/new" method="POST">
+        <div class="form-group">
+        <label for="loanamt">How much do you need? (Naira)</label>
+         <input type="text" class="form-control" placeholder="How much do you need?" name="loanRequest[amount]" id="loanamt" required>
+         <label for="duration">For how long? (Months)</label> 
+         <input type="number" class="form-control" placeholder="How long do you need it?" name="loanRequest[duration]" id="duration" required>
+        </div>
+     
+      <div class="form-group">
+        <label for="interest">At an interest rate of (%)</label>
+        <input type="number" name="loanRequest[rate]" class="form-control" id="interest" required>
+      </div>
+      <div class="form-group">
+        <label for="guarantor1">First Guarantor</label>
+        <input type="text" class="form-control" placeholder="Guarantor 1 (username)" name="loanRequest[guarantor1]" id="guarantor1" required>
+        <label for="guarantor2">Second Guarantor</label> 
+        <input type="text" class="form-control" placeholder="Guarantor 2 (username)" name="loanRequest[guarantor2]" id="guarantor2" required>
+      
+      </div>
+      <div class="form-group">
+         <button type="button" class="btn btn-success" id="submit">Check how much you will pay</button>
+        </div>  
+        <input type="text" class="form-control" id="paybackValue" value="" name="loanRequest[paybackAmount]" readonly>
+        <input class="form-control" type="submit" value="Confirm">         
+    </form>
+    </div>
+
+    <!-- <div id="displayContent" class="col-lg-6 col-sm-6">
+        <p id="display">Dear <%= User.firstName%>, You will pay a sum total of <span style="text-decoration: line-through; text-decoration-style: double;">N</span><span id="totalPay"> </span> for this loan.</p><br></div>
+    
+    </div> -->
+
+
+    <script>
+var loan = document.querySelector("#loanamt");
+var period = document.querySelector("#duration");
+var percent = document.querySelector("#interest");
+var monPay = document.querySelector("#monthpay");
+var totalPay = document.querySelector("#totalPay");
+var submitbtn = document.querySelector("#submit");
+var client = document.querySelector("#client");
+var result = document.querySelector("h3");
+var paybackValue = document.getElementById("paybackValue");
+
+		function loanCalc(loan,percent,period){
+	var loan;
+	var rate = percent/100;
+	var monPay = loan/period;
+	var inst = monPay + (loan*rate);
+	for(var i=2; i<=period; i++){
+		inst += monPay + ((loan-((i-1)*monPay))*rate);
+	};
+	//   inst += '';
+    // x = inst.split('.');
+    // x1 = x[0];
+    // x2 = x.length > 1 ? '.' + x[1] : '';
+    // var rgx = /(\d+)(\d{3})/;
+    // while (rgx.test(x1)) {
+    //         x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    // }
+
+    paybackValue.value =  Number(inst);
+    client.textContent = firstName.value + " " + lastName.value + ", "
+};
+
+submitbtn.addEventListener("click", function(){
+ loanCalc(loan.value,percent.value,period.value);
+ result.style.display = "block";
+});
+
+//function to add comma separators to amount
+
+// function addCommas(nStr) {
+//     nStr += '';
+//     x = nStr.split('.');
+//     x1 = x[0];
+//     x2 = x.length > 1 ? '.' + x[1] : '';
+//     var rgx = /(\d+)(\d{3})/;
+//     while (rgx.test(x1)) {
+//             x1 = x1.replace(rgx, '$1' + ',' + '$2');
+//     }
+//     return x1 + x2;
+// }
+    </script>
+<% include ../partials/footer.ejs %>

@@ -2,7 +2,6 @@
 <h1>Welcome <%= admin.username.toUpperCase() %></h1>
 
 <% if(Users.length !== 0){ %>
-    <p>Total balance <span class="badge badge-info"><span class="naira">N</span> <%= purse()() %></span></p>
     <% } %>
     <% if(Users.length == 0){ %>
         <div class="alert alert-danger" role="alert">

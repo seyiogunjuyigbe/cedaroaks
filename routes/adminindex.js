@@ -64,7 +64,7 @@ router.post("/login", passport.authenticate("admin-local", {
        failureRedirect: "/admin/login"
 }), function(req,res){
     // console.log(req.user);
-    res.redirect("/");
+    res.redirect("/admin");
     // Admin.find({}, function(err,admins){
     //     if(err){
     //         console.log(err)

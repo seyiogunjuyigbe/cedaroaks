@@ -32,8 +32,9 @@ function gatherPurse(){
 
 //Admin Index
 router.get("/", function(req,res){
-    res.render("/Admin/index")
-})
+    res.render("Admin/index")
+});
+
 //Dashboard Route
 router.get("/dashboard", function(req,res){
     Admin.findById(req.user.id, function(err, found){

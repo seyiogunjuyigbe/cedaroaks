@@ -1,14 +1,50 @@
 <% include ../partials/header.ejs %>
-<h1>Make Payment</h1>
-<form action="/user/profile/<%= user._id%>/contributions/new" method="POST">
-    
-    <label for="amount">Payment Amount</label>
-        <input class="form-control" placeholder="Amount" type="number" name="amount" id="amount" required>
+<h1>Make N10,000 Contribution</h1>
+ <form>
+    <script src="/js/paystack-inline.js"></script>
+    <!-- <label for="amount">Payment Amount</label> -->
+        <!-- <input class="form-control" type="number" required> -->
     <!-- <label for="date">Payment Date</label> -->
     <!-- <input class="form-control" type="date" name="payment[date]" id="date" required> -->
-    <input class="form-control btn btn-outline-success" type="submit" value="Pay">
-    </form>
+    <button class="btn btn-outline-success" type="button" onclick="payWithPaystack()">Pay N10000</button> 
+     <!-- <input class="form-control btn btn-outline-success" type="submit" value="Pay " onclick="payWithPaystack()"> -->
+   </form>
+    <form style="display: none;" action="/user/profile/<%= user._id%>/contributions/new" name="payForm" id="payForm" method="POST"> 
+        <input type="text" id="amount" name="amount" readonly required>
+        <input type="text" name="ref" id="ref" readonly required>
+    </form> 
     
-
-
+    <script>
+            const ref = document.querySelector("#ref");
+            const amount = document.querySelector("#amount");
+            const payForm = document.forms["payForm"];
+          function payWithPaystack(){
+            var handler = PaystackPop.setup({
+              key: 'pk_test_b4754f3fd66d1d1de33960d0616ee0c33bb09137',
+              email: 'cedaroaks@gmail.com',
+              plan: "PLN_xanl5zs7u5m5qbf",
+              ref: "",
+              metadata: {
+                 custom_fields: [
+                    {
+                        display_name: "Mobile Number",
+                        variable_name: "mobile_number",
+                        value: "+2348012345678"
+                    }
+                 ]
+              },
+              callback: function(response){
+     
+                  alert('successfully paid. transaction ref is ' + response.reference);
+                  amount.value = 10000;
+                  ref.value = response.reference;
+                  payForm.submit();
+              },
+              onClose: function(){
+                  alert('window closed');
+              }
+            });
+            handler.openIframe();
+          }
+        </script> 
 <% include ../partials/footer.ejs %>

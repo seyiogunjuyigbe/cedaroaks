@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema({
     password: String,
     payments: [{
         amount:Number,
-        date:String
+        date:String,
+        paymentRef: String
     }],
     loanRequests:[{
         amount: Number,
@@ -23,8 +24,12 @@ const userSchema = new mongoose.Schema({
         dueDate: {type: String, default: ""},
         guarantor1ID: String,
         guarantor1Username: String,
+        guarantor1Code: String,
+        guarantor1Status: {type: Boolean, default: false},
         guarantor2ID: String,
         guarantor2Username: String,
+        guarantor1Code: String,
+        guarantor2Status: {type: Boolean, default: false}
     }],
     approvedLoans:[
         {
@@ -36,11 +41,14 @@ const userSchema = new mongoose.Schema({
     guarantorRequests:[
         {
             requestorId: String,
+            loanID: String,
             requestorUsername:String,
             requestAmount: Number,
             requestDate: String,
             requestDueDate: String,
-            requestPaybackAmount: Number
+            requestPaybackAmount: Number,
+            approvalStatus: Boolean,
+            approvalID: String
             
     }],
     balance: {type: Number},

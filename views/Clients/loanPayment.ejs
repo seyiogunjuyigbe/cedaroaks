@@ -1,0 +1,42 @@
+<% include ../partials/header.ejs %>
+<script src="/js/paystack-inline.js"></script>
+
+<div class="jumbotron">
+    <h1>Loan Payment</h1>
+    <p><%=loan%></p>
+</div>
+<div>
+<form action="" method=>
+<input type="text" name="gua1Code" id="gua1code" class="form-control" placeholder="enter guarantor 1 approval code here" required>
+<input type="text" name="gua2Code" id="gua2code" class="form-control" placeholder="enter guarantor 2 approval code here" required>
+<input type="submit" class="form-control" onclick="return validatePay">
+</form>
+</div>
+
+<script>
+// var body = document.getElementById("body");
+// var username = body.getAttribute("data");
+// var arr = body.getAttribute("all").split(",");
+var guarantor1 = document.querySelector("#guarantor1");
+var guarantor2 = document.querySelector("#guarantor2")
+function validatePay(){
+  if(arr.indexOf(guarantor1.value) == -1){
+    alert("Error! Guarantor 1 does not exist");
+    return false;
+  } else if(arr.indexOf(guarantor2.value) == -1){
+    alert("Error! Guarantor 2 does not exist");
+    return false;
+  } 
+  else if(guarantor1.value == guarantor2.value){
+    alert("Sorry, you cannot use the same guarantor twice");
+    return false;
+  } else if(guarantor1.value == username || guarantor2.value == username){
+    alert("Error! you cannot use yourself as a guarantor for your own loan!");
+    return false;
+  } 
+    return true;
+
+}
+
+</script>
+<% include ../partials/footer.ejs %>

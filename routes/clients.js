@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
 const User = require('../models/user');
+const request = require("request");
  
 //Dashboard Route
 router.get("/profile/:id/dashboard", function(req,res){
@@ -13,44 +14,7 @@ router.get("/profile/:id/dashboard", function(req,res){
         }
     }) 
 })
-
-//Contribution Form
-router.get("/profile/:id/contrib/new", isLoggedIn, function(req,res){
-    User.findById(req.params.id, function(err,user){
-        if(err){
-            console.log(err)
-        } else{
-            res.render("Clients/contributionForm", {user:user})
-        }
-   })
-});
-
-//New payment route
-router.post("/profile/:id/contrib/new", isLoggedIn, function(req,res){
-    
-    User.findById(req.user._id, function(err, user){
-        if(err){
-            console.log(err)
-        } else{
-            // let payment = req.body.payments;
-            let date = new Date();
-            let payment = {amount:req.body.amount, date: date.toDateString()}
-            user.payments.push(payment);
-            user.payments.forEach(function(payment){
-            if(user.balance == NaN || user.balance == undefined){
-                user.balance = 0;
-                user.balance += payment.amount;
-            } else{
-                user.balance += payment.amount;
-            }
-         })
-            user.save();
-            console.log(`${user.firstName} paid ${payment.amount} on ${payment.date}`)
-            console.log(user)
-        }
-        res.redirect(`/user/profile/${user._id}`)
-    });
-});
+ 
 
 //Show User profile and balance
 router.get("/profile/:id", function(req,res){
@@ -69,11 +33,22 @@ router.get("/profile/:id/loan-request/new", isLoggedIn, function(req,res){
         if(err){
             console.log(err)
         } else{
-            res.render("Clients/loanRequest", {User:user})
+            User.find({}, function(err, all){
+                if (err) {
+                    console.log(errr)
+                } else {
+                    var users = [];
+                    all.forEach(x => {
+                        users.push(x.username)
+                    });
+            res.render("Clients/loanRequest", {User:user, users:users})
+            
+                }
+            })
         }
     })
     
-})
+}) 
 
 router.post("/profile/:id/loan-request/new", isLoggedIn, function(req,res){
     User.findById(req.params.id, function(err,user){
@@ -84,8 +59,9 @@ router.post("/profile/:id/loan-request/new", isLoggedIn, function(req,res){
            var date = new Date().toDateString();
            var amount = loanRequest.paybackAmount;
            loanRequest.dateApplied = date;
-           
-           var requestObj = {
+           user.loanRequests.push(loanRequest); 
+            // user.save();
+            var requestObj = {
                 requestorId: user._id,
                 requestorUsername:user.username,
                 requestAmount: loanRequest.amount,
@@ -93,6 +69,7 @@ router.post("/profile/:id/loan-request/new", isLoggedIn, function(req,res){
                 requestDueDate: "",
                 requestPaybackAmount: loanRequest.paybackAmount
         };
+        console.log(requestObj)
            User.findOne({username: loanRequest.guarantor1}, function(err,guarantor1){
                 if(err){
                     console.log(err)
@@ -114,11 +91,11 @@ router.post("/profile/:id/loan-request/new", isLoggedIn, function(req,res){
                     guarantor2.save();
                     // console.log(guarantor2);
                 }
-                user.loanRequests.push(loanRequest); 
                 user.save();
             });
          });
         }
+        // res.send(loan);
         res.redirect(`/user/profile/${user._id}/loan-request/status`);
     })
     
@@ -135,18 +112,108 @@ router.get("/profile/:id/loan-request/status", isLoggedIn, function(req,res){
     
 })
 
+//Loan Payment Route
+router.get("/profile/:id/loan-request/:loan_id/status", isLoggedIn, function(req,res){
+    User.findById(req.params.id, function (err, user) {
+        if (err) {
+            console.log(err)
+        } else {
+            let found;
+            user.loanRequests.forEach(function(x){
+                if(x._id == req.params.loan_id){
+                    found = x;
+                }
+                               
+            })
+            // res.send(found);
+            res.render("Clients/loanPayment", {loan:found})
+        }
+    })
+
+})
+
 // Enter Guarantor code route
 router.get("/profile/:id/guarantor-requests", isLoggedIn, function(req,res){
-    User.findById(req.params.id, isLoggedIn, function(err,user){
+    User.findById(req.params.id, function(err,user){
         if(err){
             console.log(err)
         } else{
-            res.render("Clients/guarantorRequest", {user:user})
+            res.render("Clients/guarantorRequest", {User:user})
         }
     })
 })
-//Generate one time code for another user
 
+//Generate one time code for another user
+router.get("/profile/:id/guarantor-requests/:request_id/approve", isLoggedIn, function(req,res){
+   var found; 
+   var x;
+   User.findById(req.params.id, function(err,user){
+        if(err){
+            console.log(err)
+        } else{
+            
+            user.guarantorRequests.forEach(foundRequest => {
+                if(foundRequest._id == req.params.request_id){
+                    found = foundRequest._id;
+                    var reqIDClip = String(found).slice(0,10);
+                    let userIDClip = String(user._id).slice(11,24);
+                    const approvalID = reqIDClip + userIDClip;
+                    // console.log(approvalID);
+                    foundRequest.approvalStatus = true;
+                    foundRequest.approvalID= approvalID;
+                    x = foundRequest;
+                } 
+                
+                })
+                user.save();
+              
+            } 
+           console.log("X: " + x)
+User.findById(x.requestorId, function(err, foundUser){
+    if (err) {
+        console.log(err)
+    } else {
+        res.send(foundUser);
+        console.log(user);
+    }
+})
+                  // res.render("Clients/guarantorRequest", {User:user})
+    });
+                
+
+
+    
+        //     let smsRecipient = foundUser.phone;
+        //     let smsToken = "VZtzrPbfChTUCmMl38xfZTntVolPff0JQBuhFOJvStSYNbol6GX2dID1pZgao4ocsH0AUk3I3XwuhU2h5v08V5odLdfN6UodIO2P";
+        //     let message = "Dear " + foundUser.firstName + ", please use this token for approval: "+approvalID;
+
+        // request("https://smartsmssolutions.com/api/json.php?&sender= Cedar Oaks" + "&to=" + smsRecipient + "&message=" + message +"&routing=2"+ "&type=0&token="+ smsToken, function(error, response, body){
+        //     if(error){
+        //         console.log(error);
+        //     } else if(!error && response.statusCode == 200){  
+
+        //     }                    
+        // });                   
+        //    var found;
+        //    foundUser.loanRequests.forEach(x => {
+            //    if (x._id == )
+        //    });
+            // if(foundUser.guarantor1ID == user._id){
+            // foundUser.guarantor1Code = approvalID;
+            // foundUser.guarantor1Status=true;
+            // console.log("Guarantor 1 found");
+            
+        // } 
+        // else if(foundUser.guarantor2ID == user._id){
+            // foundUser.guarantor2Code = approvalID;
+            // foundUser.guarantor2Status=true;
+            // console.log("Guarantor 2 found");
+        // }
+        
+//         foundUser.save();
+// })
+
+})
 //Pay back loan
 
 

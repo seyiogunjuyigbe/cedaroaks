@@ -33,11 +33,11 @@ table{
                                 <td>No Guarantor</td>
                                 <td>No Guarantor</td>
                           <%  } else{ %>
-                            <td><a href="/user/profile/<%=request.guarantor1ID%>">Guarantor 1</a></td>  
-                            <td><a href="/user/profile/<%=request.guarantor2ID%>">Guarantor 2</a></td>                                  
+                            <td><a href="/user/profile/<%=request.guarantor1ID%>"><%=request.guarantor1Username%></a></td>  
+                            <td><a href="/user/profile/<%=request.guarantor2ID%>"><%=request.guarantor2Username%></a></td>                                  
                           <%  } %>
 
-                            <td><span class="badge badge-warning">Awaiting Approval</span></td>                   
+                            <td><span class="badge badge-warning"> <a href="/user/profile/<%=User._id%>/loan-request/<%=request._id%>/status">Check Status</a> </span></td>                   
                        </tr>
                   <%  })%>
                 </tbody>

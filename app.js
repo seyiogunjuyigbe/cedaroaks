@@ -7,26 +7,8 @@ var LocalStrategy = require('passport-local');
 var passportLocalMongoose = require('passport-local-mongoose');
 var methodOverride = require('method-override');
 var flash = require("connect-flash");
-var paystack = require('paystack')('secret_key');
+var request = require("request");
 
- 
-paystack.key = 'sk_test_96e638f48542c0be579ef8b0985b9955a413144a';
-// paystack.plan.create({
-//     name: 'API demo',
-//     amount: 10000,
-//     interval: 'monthly'
-//   })
-//     .then(function(error, body) {
-//        console.log(error);
-//       console.log(body);
-//       });
-
-    
-//       paystack.plan.get(90)
-//       .then(function(error, body) {
-//           console.log(error);
-//           console.log(body);
-//       });
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/cedaroaks', {useNewUrlParser: true});
 
@@ -91,7 +73,18 @@ function isLoggedIn(req,res,next){
     }
     }
 
-
+// User.find({}, function(err, all){
+//     if(err){
+//         console.log(err)
+//     } else{
+//         all.forEach(function(x){
+//             x.loanRequests = [];
+//             x.guarantorRequests = [];
+//             x.save();
+//             console.log("done!")
+//         })
+//     }
+// })
 function clearUsers(){
     User.remove({}, function(err,removed){
         if(err){
@@ -135,10 +128,20 @@ Admin.register(newAdmin, password, function(err,admin){
 
 // createAdmin();
 
+// User.find({
+//     'username': { $in: [
+//         mongoose.Types.ObjectId('sanya'),
+//         mongoose.Types.ObjectId('flo'), 
+//         mongoose.Types.ObjectId('seyi')
+//     ]}
+// }, function(err, docs){
+//      console.log(docs);
+// });
+
 app.get("*", function(req,res){
     res.render("Error");
 })
 
-app.listen(8888, process.env.IP, function(){
+app.listen(3000, process.env.IP, function(){
     console.log("App Started!")
 })

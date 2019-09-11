@@ -4,6 +4,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 // const User = require("./")
 const paymentSchema = new mongoose.Schema({
     amount: Number,
+    paymentRef: String,
     date: String,
     payee: {
         id: {

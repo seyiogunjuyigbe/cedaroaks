@@ -3,7 +3,7 @@ const router = express.Router({mergeParams: true});
 const User = require('../models/user');
 const Payment = require("../models/payment");
 
- 
+  
 router.get("/new", function(req,res){
     User.findById(req.params.id, function(err,user){
         if(err){
@@ -20,17 +20,20 @@ router.post("/new", isLoggedIn, function (req,res){
         if(err){
             console.log(err)
         } else{
-            var amount = req.body.amount;
-                      Payment.create({amount:amount}, function(err, payment){
+            const amount = req.body.amount;
+            const ref = req.body.ref;
+                      Payment.create({amount:amount, ref:ref}, function(err, payment){
                 if(err){
                     console.log(err)
                 } else{
-                    payment.date = Date();
+                    var now = new Date()
+                    payment.date = now.toDateString();
                     payment.payee.id = req.params.id;
                     payment.payee.firstName = user.firstName;
                     payment.payee.lastName = user.lastName;
                     payment.payee.phoneNumber = user.phone;
                     payment.payee.email = user.email;
+                    payment.paymentRef = ref;
                     payment.save()
                     user.payments.push(payment);
                     // user.payments.forEach(function(payment){
@@ -42,7 +45,7 @@ router.post("/new", isLoggedIn, function (req,res){
                     //     }
                     //  })
                     user.save();
-                    console.log(user);
+                    console.log("payment successful");
                 }
                 res.redirect(`/user/profile/${user._id}`)
             })  

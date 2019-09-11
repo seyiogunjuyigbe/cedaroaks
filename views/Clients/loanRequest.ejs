@@ -1,7 +1,8 @@
 <% include ../partials/header.ejs %>
 
-<div class="container">
-    <div class="jumbotron"><h1>Loan Calculator</h1>
+<div class="container" id="body" data="<%=User.username%>" all="<%=users%>">
+    <div class="jumbotron"><h1>Loan Request</h1>
+      
     <p id="hint">Hint: Input the details as required, do not add commas or other symbols where numbers are required.</p></div>
     
         <form action="/User/profile/<%= User._id%>/loan-request/new" method="POST">
@@ -9,12 +10,12 @@
         <label for="loanamt">How much do you need? (Naira)</label>
          <input type="text" class="form-control" placeholder="How much do you need?" name="loanRequest[amount]" id="loanamt" required>
          <label for="duration">For how long? (Months)</label> 
-         <input type="number" class="form-control" placeholder="How long do you need it?" name="loanRequest[duration]" id="duration" required>
+         <input type="number" class="form-control" placeholder="How long do you need it?" min="1" name="loanRequest[duration]" id="duration" required>
         </div>
      
       <div class="form-group">
         <label for="interest">At an interest rate of (%)</label>
-        <input type="number" name="loanRequest[rate]" class="form-control" id="interest" required>
+        <input type="number" name="loanRequest[rate]" class="form-control" min="1" id="interest" required>
       </div>
       <div class="form-group">
         <label for="guarantor1">First Guarantor</label>
@@ -27,15 +28,9 @@
          <button type="button" class="btn btn-success" id="submit">Check how much you will pay</button>
         </div>  
         <input type="text" class="form-control" id="paybackValue" value="" name="loanRequest[paybackAmount]" readonly>
-        <input class="form-control" type="submit" value="Confirm">         
+        <input class="form-control" type="submit" value="Confirm" onclick="return validate();">         
     </form>
     </div>
-
-    <!-- <div id="displayContent" class="col-lg-6 col-sm-6">
-        <p id="display">Dear <%= User.firstName%>, You will pay a sum total of <span style="text-decoration: line-through; text-decoration-style: double;">N</span><span id="totalPay"> </span> for this loan.</p><br></div>
-    
-    </div> -->
-
 
     <script>
 var loan = document.querySelector("#loanamt");
@@ -56,17 +51,7 @@ var paybackValue = document.getElementById("paybackValue");
 	for(var i=2; i<=period; i++){
 		inst += monPay + ((loan-((i-1)*monPay))*rate);
 	};
-	//   inst += '';
-    // x = inst.split('.');
-    // x1 = x[0];
-    // x2 = x.length > 1 ? '.' + x[1] : '';
-    // var rgx = /(\d+)(\d{3})/;
-    // while (rgx.test(x1)) {
-    //         x1 = x1.replace(rgx, '$1' + ',' + '$2');
-    // }
-
     paybackValue.value =  Number(inst);
-    client.textContent = firstName.value + " " + lastName.value + ", "
 };
 
 submitbtn.addEventListener("click", function(){
@@ -74,18 +59,29 @@ submitbtn.addEventListener("click", function(){
  result.style.display = "block";
 });
 
-//function to add comma separators to amount
+var body = document.getElementById("body");
+var username = body.getAttribute("data");
+var arr = body.getAttribute("all").split(",");
+var guarantor1 = document.querySelector("#guarantor1");
+var guarantor2 = document.querySelector("#guarantor2")
+function validate(){
+  if(arr.indexOf(guarantor1.value) == -1){
+    alert("Error! Guarantor 1 does not exist");
+    return false;
+  } else if(arr.indexOf(guarantor2.value) == -1){
+    alert("Error! Guarantor 2 does not exist");
+    return false;
+  } 
+  else if(guarantor1.value == guarantor2.value){
+    alert("Sorry, you cannot use the same guarantor twice");
+    return false;
+  } else if(guarantor1.value == username || guarantor2.value == username){
+    alert("Error! you cannot use yourself as a guarantor for your own loan!");
+    return false;
+  } 
+    return true;
 
-// function addCommas(nStr) {
-//     nStr += '';
-//     x = nStr.split('.');
-//     x1 = x[0];
-//     x2 = x.length > 1 ? '.' + x[1] : '';
-//     var rgx = /(\d+)(\d{3})/;
-//     while (rgx.test(x1)) {
-//             x1 = x1.replace(rgx, '$1' + ',' + '$2');
-//     }
-//     return x1 + x2;
-// }
+}
+
     </script>
 <% include ../partials/footer.ejs %>

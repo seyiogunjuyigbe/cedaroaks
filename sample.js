@@ -263,6 +263,8 @@ function dec(arr){
         })
     })
     return list;
+
 }
 dec(bankList);
-console.log(list)
+// console.log(list);
+

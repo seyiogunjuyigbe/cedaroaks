@@ -31,26 +31,8 @@ const userSchema = new mongoose.Schema({
         guarantor1Code: String,
         guarantor2Status: {type: Boolean, default: false}
     }],
-    approvedLoans:[
-        {
-            id: String,
-            amount: Number,
-            paybackAmount: Number,
-
-        }],
-    guarantorRequests:[
-        {
-            requestorId: String,
-            loanID: String,
-            requestorUsername:String,
-            requestAmount: Number,
-            requestDate: String,
-            requestDueDate: String,
-            requestPaybackAmount: Number,
-            approvalStatus: Boolean,
-            approvalID: String
-            
-    }],
+    approvedLoans:[],
+    guarantorRequests:[],
     balance: {type: Number},
     category: String
 });

@@ -59,46 +59,39 @@ router.post("/profile/:id/loan-request/new", isLoggedIn, function(req,res){
            var date = new Date().toDateString();
            var amount = loanRequest.paybackAmount;
            loanRequest.dateApplied = date;
-           user.loanRequests.push(loanRequest); 
-            // user.save();
-            var requestObj = {
-                requestorId: user._id,
-                requestorUsername:user.username,
-                requestAmount: loanRequest.amount,
-                requestDate: date,
-                requestDueDate: "",
-                requestPaybackAmount: loanRequest.paybackAmount
-        };
-        console.log(requestObj)
-           User.findOne({username: loanRequest.guarantor1}, function(err,guarantor1){
-                if(err){
-                    console.log(err)
-                } else{
-                        loanRequest.guarantor1ID = guarantor1._id;
-                        loanRequest.guarantor1Username = guarantor1.username;
-                        guarantor1.guarantorRequests.push(requestObj);
-                        guarantor1.save();
-                        // console.log(guarantor1);
-
-                }
-            User.findOne({username:loanRequest.guarantor2}, function(err,guarantor2){
-                if(err){
-                    console.log(err)
-                } else{
-                    loanRequest.guarantor2ID = guarantor2._id;
-                    loanRequest.guarantor2Username = guarantor2.username;
-                    guarantor2.guarantorRequests.push(requestObj);
-                    guarantor2.save();
-                    // console.log(guarantor2);
-                }
-                user.save();
-            });
-         });
+           user.loanRequests.push(loanRequest);   
+                        user.save();
+                        var loan = loanRequest;
+                        function reqObj(){
+                            var requestObj = {
+                                loan_id: loan._id,
+                                amount: amount,
+                                dateApplied: date,
+                                duration: loan.duration,
+                                paybackAmount: 0,
+                                rate: loan.rate,
+                                dueDate: "",
+                                requestorID: user._id,
+                                requestorUsername: user.username
+                            };
+                            console.log(loan);
+                            var gua1 = loan.guarantor1;
+                            var gua2 = loan.guarantor1;
+                            User.findOne({username: gua1}, function(gua1){
+                                // gua1.guarantorRequests.push(requestObj);
+                                // gua1.save();
+                                console.log(gua1);
+                                });
+                    User.findOne({username: gua2}, function(gua2){
+                        // gua2.guarantorRequests.push(requestObj);
+                        // gua2.save();
+                        console.log(gua2);
+                                })
+                        }
+      reqObj();
         }
-        // res.send(loan);
         res.redirect(`/user/profile/${user._id}/loan-request/status`);
-    })
-    
+        })
 })
 //Loan Status Route
 router.get("/profile/:id/loan-request/status", isLoggedIn, function(req,res){

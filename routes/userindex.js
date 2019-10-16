@@ -28,7 +28,7 @@ User.register(newUser, req.body.password, function(err,user){
     }
         passport.authenticate("local")(req, res, function(){
             console.log(user);
-            res.redirect("/user/dashboard")
+            return res.render("index", {currentUser:user})
            })
     
 })

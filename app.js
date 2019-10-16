@@ -128,20 +128,11 @@ Admin.register(newAdmin, password, function(err,admin){
 
 // createAdmin();
 
-// User.find({
-//     'username': { $in: [
-//         mongoose.Types.ObjectId('sanya'),
-//         mongoose.Types.ObjectId('flo'), 
-//         mongoose.Types.ObjectId('seyi')
-//     ]}
-// }, function(err, docs){
-//      console.log(docs);
-// });
 
 app.get("*", function(req,res){
     res.render("Error");
 })
 
-app.listen(3000, process.env.IP, function(){
+app.listen(process.env.PORT, process.env.IP, function(){
     console.log("App Started!")
 })

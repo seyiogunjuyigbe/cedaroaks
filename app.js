@@ -73,62 +73,6 @@ function isLoggedIn(req,res,next){
     }
     }
 
-// User.find({}, function(err, all){
-//     if(err){
-//         console.log(err)
-//     } else{
-//         all.forEach(function(x){
-//             x.loanRequests = [];
-//             x.guarantorRequests = [];
-//             x.save();
-//             console.log("done!")
-//         })
-//     }
-// })
-function clearUsers(){
-    User.remove({}, function(err,removed){
-        if(err){
-            console.log(err)
-        } else{
-            console.log("All Users wiped off!!!!")
-        }
-    });
-
-    Admin.remove({}, function(err,removed){
-        if(err){
-            console.log(err)
-        } else{
-            console.log("All Admins wiped off!!!!")
-        }
-    });
-}
-// clearUsers();
-
-function createAdmin(){
-    var password = "password"
-    var newAdmin = new Admin({
-        username: "cedar", 
-        firstName: "Oluwaseyi",
-        lastName: "Ogunjuyigbe",
-        phone: 08169606684,
-        email: "",
-        category: "Admin"
-    })
-Admin.register(newAdmin, password, function(err,admin){
-    if(err){
-        console.log(err);
-        // return res.render('Clients/register');
-    }
-        passport.authenticate("local")(function(){
-            console.log(admin);
-            // res.redirect("/")
-           })
-    })
-};
-
-// createAdmin();
-
-
 app.get("*", function(req,res){
     res.render("Error");
 })

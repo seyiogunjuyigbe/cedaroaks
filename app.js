@@ -10,7 +10,7 @@ var flash = require("connect-flash");
 var request = require("request");
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb+srv://newUser:yuwgt2jSmk6RYBLD@cluster0-qiypo.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://user:Pass123@cluster0-ucruw.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true});
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
